@@ -178,7 +178,52 @@ function addDepRolesEmps(){
                             .then(function(answer3){
                               
                               connection.query(
+                                //I am getting error here when trying to add multiple values
                                 'INSERT INTO ?? (title,salary,department_id) VALUES (?)',[answer.do, answer3.newRoleName,answer3.newRoleSalary,answer3.newRoleDeptId], function(err,res){
+                                        if(err) {
+                                          throw err
+                                        };
+                                        console.log('added!')
+                            })
+
+                            })
+
+                    
+                  }
+
+
+                  else if(answer.do === 'employee')
+                  
+                  {
+                            inquirer
+                            .prompt(
+                              [
+                              {
+                              name: "newEmpFirstName",
+                              type: "input",
+                              message: "Enter Emp first name"
+                              },
+                              {
+                                name: "newEmpLastName",
+                                type: "input",
+                                message: "Enter Emp last name"
+                                },
+                              {name: "newEmpRoleId",
+                              type: "input",
+                              message: "Enter role_id for new employee"
+                              },
+                              {name: "newEmpManagerId",
+                              type: "input",
+                              message: "Enter manager_id for new employee (if no manager enter 0)"
+                              }
+                            ]
+                            )
+                          
+                            .then(function(answer4){
+                              
+                              connection.query(
+                                //I am getting error here when trying to add multiple values
+                                'INSERT INTO ?? (title,salary,department_id) VALUES (?)',[answer.do, answer4.newEmpFirstName,answer4.newEmpLastName,answer4.newEmpRoleId,newEmpManagerId ], function(err,res){
                                         if(err) {
                                           throw err
                                         };
