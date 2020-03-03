@@ -13,9 +13,10 @@ const connection = mysql.createConnection({
 // general entry point to the app
 connection.connect(function(err){
     if (err) throw err;
+    console.log('working');
     startApp();
+   
 });
-
 
 
 //main function
@@ -37,6 +38,7 @@ function startApp() {
         ]
       })
       .then(function(answer) {
+        
         switch (answer.action) {
         case "Add departments, roles, employees":
           addDepRolesEmps();
@@ -73,6 +75,126 @@ function startApp() {
       });
   }
   
-//first case  * Add departments, roles, employees
+  // * View departments, roles, employees
+
+function viewDepRolesEmps(){
+    inquirer
+            .prompt ({
+              name: "do",
+              type: "list",
+              message: "What would you like to view?",
+              choices: [
+                    "department",
+                    "role",
+                    "employee",
+                    //add about all
+                    "exit"
+                    ]
+
+            })
+
+            .then(function(answer){
+              connection.query(
+                'SELECT * FROM ??',`${answer.do}`, function(err,res){
+                        if(err) {
+                          throw err
+                        };
+                        console.table(res)
+                  
+             });
+
+            });
+};
+
+
+//   * Add departments, roles, employees
+
+
+
+function addDepRolesEmps(){
+      inquirer
+                .prompt ({
+                  name: "do",
+                  type: "list",
+                  message: "What would you like to add?",
+                  choices: [
+                        "department",
+                        "role",
+                        "employee",
+                        "exit"
+                        ]
+
+                })
+
+                .then(function(answer){
+                    if(answer.do=== 'department')
+                    {
+                            inquirer
+                              .prompt(
+                                {
+                                name: "newDepName",
+                                type: "input",
+                                message: "Enter dept Name"
+                                }
+                              )
+                            
+                              .then(function(answer2){
+                                
+                                connection.query(
+                                  'INSERT INTO ?? (name) VALUES (?)',[answer.do, answer2.newDepName], function(err,res){
+                                          if(err) {
+                                            throw err
+                                          };
+                                          console.log('added!')
+                              })
+
+                              })
+
+                              
+                  }
+
+                  else if(answer.do === 'role')
+                  
+                  {
+                            inquirer
+                            .prompt(
+                              [
+                              {
+                              name: "newRoleName",
+                              type: "input",
+                              message: "Enter role title"
+                              },
+                              {name: "newRoleSalary",
+                              type: "input",
+                              message: "Enter role salary"
+                              },
+                              {name: "newRoleDeptId",
+                              type: "input",
+                              message: "Enter dept_id associated with this role"
+                              }
+                            ]
+                            )
+                          
+                            .then(function(answer3){
+                              
+                              connection.query(
+                                'INSERT INTO ?? (title,salary,department_id) VALUES (?)',[answer.do, answer3.newRoleName,answer3.newRoleSalary,answer3.newRoleDeptId], function(err,res){
+                                        if(err) {
+                                          throw err
+                                        };
+                                        console.log('added!')
+                            })
+
+                            })
+
+                    
+                  }
+                
+
+              
+                              
+
+              });
+};
 
 
