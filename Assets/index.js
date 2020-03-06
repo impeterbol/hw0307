@@ -176,10 +176,18 @@ function addDepRolesEmps(){
                             )
                           
                             .then(function(answer3){
+                              console.log(answer.do);
                               
                               connection.query(
                                 //I am getting error here when trying to add multiple values
-                                'INSERT INTO ?? (title,salary,department_id) VALUES (?)',[answer.do, answer3.newRoleName,answer3.newRoleSalary,answer3.newRoleDeptId], function(err,res){
+                                'INSERT INTO ?? (title,salary,department_id) VALUES (?)',[
+                                  answer.do,
+                                  {
+                                     title: answer3.newRoleName,
+                                     salary: answer3.newRoleSalary,
+                                     department_id: answer3.newRoleDeptId
+                                  }
+                              ], function(err,res){
                                         if(err) {
                                           throw err
                                         };
@@ -242,4 +250,66 @@ function addDepRolesEmps(){
               });
 };
 
+// upd emp role
+
+ function updateEmpRoles(){
+  inquirer
+            .prompt ({
+              name: "updRole",
+              type: "list",
+              message: "What would you like to do?",
+            choices: [
+                  "List employees to update roles",
+                  "exit"
+                  ]
+            })
+
+            .then(function(answer){
+                  if(answer.updRole ==='List employees to update roles'){
+                        connection.query ('SELECT employee.first_name,employee.last_name,role.title,role.id FROM employee LEFT JOIN role ON employee.role_id=role.id',function(err,res){
+                                                if(err) {
+                                                  throw err
+                                                };
+                                                 console.table(res);
+                                                updateEmpRoles2();
+                                              });
+                                      
+                  }
+            });
+
+
+
+};
+
+
+
+
+function updateEmpRoles2(){
+  var employees = [];
+  inquirer
+        .prompt ({
+                  type: "input",
+                  name: "updEmpFirstName",
+                  message: "Enter the employees name:"
+                },
+                {
+                  type: "input",
+                  name: "updEmpSecondName",
+                  message: "Enter the employees second_name:"
+                },
+                {
+                  type: 'input',
+                  name: 'updEmpCurid',
+                  message: 'Enter Employee Id'
+                })
+                
+                .then
+                      (function(updEmpAnswers){
+                  const {updEmpFirstName, updEmpSecondName, updEmpCurid } = updEmpAnswers;
+                  
+                  console.log(updEmpAnswers)
+            // employees.push(new Emp.Manager(name, id, email, office)
+                })
+
+};
 
