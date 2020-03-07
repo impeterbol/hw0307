@@ -39,7 +39,8 @@ insert into role (title, salary, department_id) values ('senior_legal', 90000,3)
 insert into role (title, salary, department_id) values ('entry_logistics',40000,2),('senior_production',60000,4);
 DELETE FROM role WHERE id =3;
 select * from role;
-
+select * from department;
+select * from employee;
 insert into role (title, salary, department_id) values ('entry_marketing',20000,7),('senior_marketing',90000,7), ('senior_procurement',50000,6);
 
 
@@ -53,10 +54,13 @@ insert into role (title, salary, department_id) values ('entry_marketing',20000,
 
   insert into employee (first_name,last_name,role_id,manager_id) values ('John','Smith', 1);
 
+insert into department (id, name) values ('99','no_department1');
+insert into role (id,title, salary, department_id) values (99,'no_role','99','99');
+insert into employee (id, first_name,last_name,role_id,manager_id) values ('99','No_Manager','No_Manager','99','99');
 
 
   insert into employee (first_name,last_name,role_id) values ('Peter','Parker',4), ('Some', 'Guy',5), ('Dwayne','Richardson',7),('Scrudge','McDuck',9),('Iam','Bodyguard',10),('Jack','Nickolson',11),('Henry','Ford',12),('Random','Person',14),('Mr','Buyer',15);
-
+insert into employee (id,first_name,last_name,role_id) values (0,'No Manager','No Manager',0);
 
 insert into employee (first_name,last_name,role_id,manager_id) VALUES ('Donald','Carrot',6,7), ('Looney','Tunes',8,9),('Gwen','Stefany',13,14);
 
