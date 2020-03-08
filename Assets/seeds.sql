@@ -35,7 +35,7 @@ select * from department;
 insert into deparment (name) values ('it', 'logistics', 'legal', 'production', 'r&d','procurement', 'marketing','hr','finance','security');
 insert into role (title, salary, department_id) values ('associate_it', 50000,1),('senior_r&d',70000,5);
 insert into role (title, salary, department_id) values ('senior_legal', 90000,3),('entry_hr',30000,8), ('senior_hr',70000,8),('entry_finance',50000,9),('senior_finance',100000,9),('middle_security',60000,10);
--- insert into role (title, salary, values
+insert into role (id,title, salary, department_id) values (2,'mid_legal','70000',2);
 insert into role (title, salary, department_id) values ('entry_logistics',40000,2),('senior_production',60000,4);
 DELETE FROM role WHERE id =3;
 select * from role;
