@@ -516,7 +516,7 @@ function deleteDepRolesEmps(){
 
 
                   if(answer.delMain ==='Delete department'){
-                        connection.query ('SELECT department.id, department.name FROM department ORDER BY department.id',function(err,res){
+                        connection.query ('SELECT department.id, department.name FROM department',function(err,res){
                           console.table(res);
                           console.log(res)
                           
@@ -545,12 +545,10 @@ function deleteDepRolesEmps(){
                                                   
                                                   console.log(deptIdChosen);
                                                  
-                                                  let sql =  'DELETE FROM department WHERE id = ?;'
-
-                                              
+                                                  let sql = 'DELETE FROM department WHERE id = ?';
                                                     connection.query(sql,[deptIdChosen],function(err,res){
                                                         console.log(`Updated! ${depData[0]} with ID ${depData[1]} was deleted`);
-                                                        console.table(res);
+                                                        console.log(res);
                                                         deleteDepRolesEmps();
                                                           
                                                       })
@@ -677,6 +675,72 @@ function deleteDepRolesEmps(){
 
 
 
-// total budget by dept
 
-function totalBudgetByDept(){}
+
+// total budget by dept
+//View the total utilized budget of a department -- ie the combined salaries of all employees in that department
+
+function totalBudgetByDept() {
+  let listDepts = [];
+
+inquirer
+      .prompt({
+                name: "deptMain",
+                type: "list",
+                message: "What would you like to do?",
+                choices: [
+                  "Select department to see combined budget",
+                "exit"
+                ]
+              })
+
+.then(function (answer) {
+                  
+  if(answer.deptMain==="Select department to see combined budget"){
+
+                            connection.query('SELECT * FROM department',function(err,res){
+                                console.log(res);
+                              if (err){
+                                          throw err
+                                }
+                  
+                                  for (let i=0;i<res.length;i++){
+                                    listDepts.push(`${res[i].id} ${res[i].name}`)
+                                  }
+
+                            inquirer
+                                  .prompt({
+                                    name: 'deptToViewSal',
+                                    message: "Please select department to view salary",
+                                    type: 'list',
+                                    choices: listDepts
+                                  }
+                                  )
+
+                                  .then(function (answer) {
+                                      let depData = answer.deptToViewSal.split(" ");
+                                      let deptIdChosen = depData[0];
+
+                                        console.log(deptIdChosen);
+
+                                      let sql ='SELECT SUM(salary) FROM employee WHERE employee.department_id =?;'
+
+                                        connection.query(sql, [deptIdChosen], function (err, res) {
+                                        console.log(res);
+                                        console.table(res);
+                                      
+                                        totalBudgetByDept();
+
+                              });
+
+            });
+      });
+}
+
+
+    else if (answer.deptMain === 'exit'){
+          startApp();
+      };
+
+});
+};
