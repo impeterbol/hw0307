@@ -538,8 +538,69 @@ function deleteDepRolesEmps() {
 
 
 // total budget by dept
+//View the total utilized budget of a department -- ie the combined salaries of all employees in that department
 
 function totalBudgetByDept() {
+              let listDepts = [];
+
+            inquirer
+                  .prompt({
+                            name: "deptMain",
+                            type: "list",
+                            message: "What would you like to do?",
+                            choices: [
+                              "Select department to see combined budget",
+                            "exit"
+                            ]
+                          })
+
+     .then(function (answer) {
+                              
+              if(answer.deptMain==="Select department to see combined budget"){
+
+                                        connection.query('SELECT * FROM department',function(err,res){
+                                            console.log(res);
+                                          if (err){
+                                                      throw err
+                                            }
+                              
+                                              for (let i=0;i<res.length;i++){
+                                                listDepts.push(`${res[i].id} ${res[i].name}`)
+                                              }
+
+                                        inquirer
+                                              .prompt({
+                                                name: 'deptToViewSal',
+                                                message: "Please select department to view salary",
+                                                type: 'list',
+                                                choices: listDepts
+                                              }
+                                              )
+
+                                              .then(function (answer) {
+                                                  let depData = answer.deptToViewSal.split(" ");
+                                                  let deptIdChosen = depData[0];
+
+                                                    // console.log(deptIdChosen);
+
+                                                  let sql ='SELECT SUM(salary) AS "Total Salary" FROM employee WHERE employee.department_id =?;'
+
+                                                    connection.query(sql, [deptIdChosen], function (err, res) {
+                                                    console.log(res);
+                                                    console.table(res);
+                                                  
+                                                    totalBudgetByDept();
+
+                                          });
+
+                        });
+                  });
+           }
 
 
-}
+                else if (answer.deptMain === 'exit'){
+                      startApp();
+                  };
+
+     });
+ };
