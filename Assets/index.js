@@ -13,7 +13,7 @@ const connection = mysql.createConnection({
 // general entry point to the app
 connection.connect(function(err){
     if (err) throw err;
-    console.log('working');
+    // console.log('working');
     startApp();
    
 });
@@ -94,16 +94,26 @@ function viewDepRolesEmps(){
             })
 
             .then(function(answer){
-              connection.query(
-                'SELECT * FROM ??',`${answer.do}`, function(err,res){
-                        if(err) {
-                          throw err
-                        };
-                        console.table(res)
-                  
-             });
+                    if(answer.do==='exit'){
+                     startApp();
+                    }
+
+                    else {
+                        connection.query('SELECT * FROM ??',`${answer.do}`, function(err,res){
+                                    if(err) {
+                                    throw err
+                                }
+                                  console.table(res);
+                                    viewDepRolesEmps();
+                                    
+                                            
+                        });
+                    }
+           
 
             });
+
+
 };
 
 
@@ -127,7 +137,13 @@ function addDepRolesEmps(){
                 })
 
                 .then(function(answer){
-                    if(answer.do=== 'department')
+
+                  if(answer.do==='exit'){
+                    startApp();
+                    
+                   }
+
+                   else if(answer.do=== 'department')
                     {
                             inquirer
                               .prompt(
@@ -145,7 +161,10 @@ function addDepRolesEmps(){
                                           if(err) {
                                             throw err
                                           };
-                                          console.log('added!')
+                                       
+                                          console.log(`Department ${answer2.newDepName} was added!`);
+                                          addDepRolesEmps();
+                                         
                               })
 
                               })
@@ -176,22 +195,17 @@ function addDepRolesEmps(){
                             )
                           
                             .then(function(answer3){
-                              console.log(answer.do);
-                              
+                              // console.log(answer.do);
+                                                           
                               connection.query(
-                                //I am getting error here when trying to add multiple values
-                                'INSERT INTO ?? (title,salary,department_id) VALUES (?)',[
-                                  answer.do,
-                                  {
-                                     title: answer3.newRoleName,
-                                     salary: answer3.newRoleSalary,
-                                     department_id: answer3.newRoleDeptId
-                                  }
-                              ], function(err,res){
+                                //I was getting error here when trying to add multiple values
+                                'INSERT INTO ?? (title,salary,department_id) VALUES (?,?,?)',[answer.do,answer3.newRoleName,answer3.newRoleSalary,answer3.newRoleDeptId], function(err,res){
                                         if(err) {
                                           throw err
                                         };
-                                        console.log('added!')
+                                        console.log(`Role ${answer3.newRoleName} with salary ${answer3.newRoleSalary} and department_id ${answer3.newRoleDeptId} added!`);
+                                        addDepRolesEmps();
+                                       
                             })
 
                             })
@@ -222,7 +236,7 @@ function addDepRolesEmps(){
                               },
                               {name: "newEmpManagerId",
                               type: "input",
-                              message: "Enter manager_id for new employee (if no manager enter 0)"
+                              message: "Enter manager_id for new employee (if no manager enter 99)"
                               }
                             ]
                             )
@@ -231,11 +245,13 @@ function addDepRolesEmps(){
                               
                               connection.query(
                                 //I am getting error here when trying to add multiple values
-                                'INSERT INTO ?? (title,salary,department_id) VALUES (?)',[answer.do, answer4.newEmpFirstName,answer4.newEmpLastName,answer4.newEmpRoleId,newEmpManagerId ], function(err,res){
+                                'INSERT INTO ?? (first_name,last_name,role_id,manager_id) VALUES (?,?,?,?)',[answer.do, answer4.newEmpFirstName,answer4.newEmpLastName,answer4.newEmpRoleId,answer4.newEmpManagerId], function(err,res){
                                         if(err) {
                                           throw err
                                         };
-                                        console.log('added!')
+                                        console.log(`New employee ${answer4.newEmpFirstName} ${answer4.newEmpLastName} with role_id ${answer4.newEmpRoleId} and manager ${answer4.newEmpManagerId} was added`);
+                                        addDepRolesEmps();
+                                        
                             })
 
                             })
@@ -250,6 +266,8 @@ function addDepRolesEmps(){
               });
 };
 
+
+
 // upd emp role
 
  function updateEmpRoles(){
@@ -259,57 +277,211 @@ function addDepRolesEmps(){
               type: "list",
               message: "What would you like to do?",
             choices: [
-                  "List employees to update roles",
+                  // "List employees to update roles",
+                  "Update role for an employee",
                   "exit"
                   ]
             })
 
             .then(function(answer){
-                  if(answer.updRole ==='List employees to update roles'){
-                        connection.query ('SELECT employee.first_name,employee.last_name,role.title,role.id FROM employee LEFT JOIN role ON employee.role_id=role.id',function(err,res){
-                                                if(err) {
+             let listEmps =[];
+             let listRoles =[];
+                  if(answer.updRole ==='Update role for an employee'){
+                        connection.query ('SELECT employee.id, employee.first_name,employee.last_name,employee.role_id,role.title FROM employee LEFT JOIN role ON employee.role_id=role.id',function(err,res){
+                          console.table(res);
+                          console.log(res)
+                          
+                          for (let i=0;i<res.length;i++){
+                            listEmps.push(`${res[i].first_name} ${res[i].last_name} ${res[i].id}`);
+                            listRoles.push(`${res[i].title} ${res[i].role_id}`)
+                           };
+                           
+                         
+                                          if(err) {
                                                   throw err
                                                 };
-                                                 console.table(res);
-                                                updateEmpRoles2();
+                              
+                                                inquirer
+                                                  .prompt([{
+                                                    name: 'empToChoose',
+                                                    message: "Please select employee to update the role for",
+                                                    type:'list',
+                                                    choices:listEmps
+                                                  },
+                                                  {
+                                                    name: 'roleToChoose',
+                                                    message: 'Select a new role',
+                                                    type:'list',
+                                                    choices:listRoles
+                                                  }
+                                                ])
+                                                
+                                                .then(function(answer){
+                                                  let empIdChosen = answer.empToChoose.split(" ");
+                                                  let empChosen = empIdChosen[2];
+                                                  
+                                                  let roleIdChosen = answer.roleToChoose.split(" ");
+                                                  let roleChosen = roleIdChosen[1];
+                                                  console.log(empChosen);
+                                                  console.log(roleChosen)
+                                                 
+                                                  let sql = 'UPDATE employee SET role_id = ? WHERE id = ?';
+                                                    connection.query(sql,[roleChosen,empChosen],function(err,res){
+                                                        console.log(`Updated! ${empIdChosen[0]} ${empIdChosen[1]} is now ${roleIdChosen[0]}`);
+                                                        // console.log(res);
+                                                        updateEmpRoles();
+                                                          
+                                                      })
+                                                   
+                                                  // ---
+
+                                                })  
+                                               
+                                                //  updateEmpRoles();
                                               });
                                       
                   }
+
+                else if(answer.updRole ==="exit"){
+                  startApp();
+                }
             });
-
-
+            
 
 };
 
 
 
 
-function updateEmpRoles2(){
-  var employees = [];
+
+
+
+
+//upd emp manager ////////////////////////
+
+
+function updateEmpManagers(){
   inquirer
-        .prompt ({
-                  type: "input",
-                  name: "updEmpFirstName",
-                  message: "Enter the employees name:"
-                },
-                {
-                  type: "input",
-                  name: "updEmpSecondName",
-                  message: "Enter the employees second_name:"
-                },
-                {
-                  type: 'input',
-                  name: 'updEmpCurid',
-                  message: 'Enter Employee Id'
-                })
-                
-                .then
-                      (function(updEmpAnswers){
-                  const {updEmpFirstName, updEmpSecondName, updEmpCurid } = updEmpAnswers;
-                  
-                  console.log(updEmpAnswers)
-            // employees.push(new Emp.Manager(name, id, email, office)
-                })
+            .prompt ({
+              name: "updManager",
+              type: "list",
+              message: "What would you like to do?",
+            choices: [
+                  // "List employees to update manager",
+                  "Update manager for an employee",
+                  "exit"
+                  ]
+            })
+
+            .then(function(answer){
+             let listEmps =[];
+             let listManagers =[];
+                  if(answer.updManager ==="Update manager for an employee"){
+                        connection.query ('SELECT employee.id, employee.first_name,employee.last_name,employee.role_id,employee.manager_id FROM employee',function(err,res){
+                          console.table(res);
+                          console.log(res)
+                          
+                          for (let i=0;i<res.length;i++){
+                     
+                              listManagers.push(`${res[i].first_name} ${res[i].last_name} ${res[i].id}`);
+                            
+                            listEmps.push(`${res[i].first_name} ${res[i].last_name} ${res[i].id}`);
+                            
+                           };
+                           
+                         
+                                          if(err) {
+                                                  throw err
+                                                };
+                              
+                                                inquirer
+                                                  .prompt([{
+                                                    name: 'empToChoose',
+                                                    message: "Please select employee to update the manager for",
+                                                    type:'list',
+                                                    choices:listEmps
+                                                  },
+                                                  {
+                                                    name: 'managerToChoose',
+                                                    message: 'Select a new manager',
+                                                    type:'list',
+                                                    choices:listManagers
+                                                  }
+                                                ])
+                                                
+                                                .then(function(answer){
+                                                  let empIdChosen = answer.empToChoose.split(" ");
+                                                  let empChosen = empIdChosen[2];
+                                                  
+                                                  let managerIdChosen = answer.managerToChoose.split(" ");
+                                                  let managerChosen = managerIdChosen[2];
+                                                  console.log(empIdChosen);
+                                                  console.log(managerChosen);
+                                                 
+                                                  let sql = 'UPDATE employee SET manager_id = ? WHERE id = ?';
+                                                    connection.query(sql,[managerChosen,empChosen],function(err,res){
+                                                        console.log(`Updated! ${empIdChosen[0]} ${empIdChosen[1]} now has manager ${managerIdChosen[0]} ${managerIdChosen[1]}`);
+                                                        console.log(res);
+                                                        updateEmpRoles();
+                                                          
+                                                      })
+                                                   
+                                        
+
+                                                })  
+                                               
+                                                
+                                              });
+                                      
+                  }
+
+                else if(answer.updManager ==="exit"){
+                  startApp();
+                }
+            });
+            
 
 };
 
+
+
+
+//view emps by manager ////////////////////////
+
+function viewEmpByManager(){
+        inquirer
+        .prompt ({
+          name: "viewEmpByManager",
+          type: "list",
+          message: "What would you like to do?",
+        choices: [
+             
+              "View employees by manager",
+              "exit"
+              ]
+        })
+          .then(function(answer){
+
+            if(answer.viewEmpByManager=== "View employees by manager"){
+                      let sql = `SELECT CONCAT(m.first_name, ', ', m.last_name) AS Manager, CONCAT(e.first_name, ', ',e.last_name) AS Direct_Report FROM employee e INNER JOIN employee m ON m.id = e.manager_id ORDER BY Manager`;
+                  connection.query(sql,function(err,res){
+                         
+                          console.log(res);
+                          console.table(res);
+                          updateEmpRoles();
+                  })
+
+            }
+            
+            else if(answer.viewEmpByManager ==="exit"){
+              startApp();
+            }
+
+          });
+
+}
+
+
+
+
+// Delete department / role / emp 
