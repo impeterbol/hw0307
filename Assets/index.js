@@ -484,4 +484,203 @@ function viewEmpByManager(){
 
 
 
+
+
+
+
+
 // Delete department / role / emp 
+
+
+
+
+function deleteDepRolesEmps(){
+  inquirer
+            .prompt ({
+              name: "delMain",
+              type: "list",
+              message: "What would you like to do?",
+            choices: [
+                  // "List employees to update roles",
+                  "Delete department",
+                  "Delete role",
+                  "Delete employee",
+                  "exit"
+                  ]
+            })
+
+            .then(function(answer){
+             let listEmps =[];
+             let listRoles =[];
+             let listDepts =[];
+
+
+                  if(answer.delMain ==='Delete department'){
+                        connection.query ('SELECT department.id, department.name FROM department',function(err,res){
+                          console.table(res);
+                          console.log(res)
+                          
+                          for (let i=0;i<res.length;i++){
+                            listDepts.push(`${res[i].name} ${res[i].id}`);
+                            
+                           };
+                           
+                         
+                                          if(err) {
+                                                  throw err
+                                                };
+                              
+                                                inquirer
+                                                  .prompt({
+                                                    name: 'deptToChoose',
+                                                    message: "Please select department to delete",
+                                                    type:'list',
+                                                    choices:listDepts
+                                                  }
+                                                )
+                                                
+                                                .then(function(answer){
+                                                  let depData = answer.deptToChoose.split(" ");
+                                                  let deptIdChosen = depData[1];
+                                                  
+                                                  console.log(deptIdChosen);
+                                                 
+                                                  let sql = 'DELETE FROM department WHERE id = ?';
+                                                    connection.query(sql,[deptIdChosen],function(err,res){
+                                                        console.log(`Updated! ${depData[0]} with ID ${depData[1]} was deleted`);
+                                                        console.log(res);
+                                                        deleteDepRolesEmps();
+                                                          
+                                                      })
+                                                   
+                                                  // ---
+
+                                                })  
+                                               
+                                                //  updateEmpRoles();
+                                              });
+                                      
+                  }
+
+
+
+                  else if(answer.delMain ==="Delete role"){
+                    connection.query ('SELECT role.id, role.title, role.salary, role.department_id FROM role',function(err,res){
+                      console.table(res);
+                      console.log(res)
+                      
+                      for (let i=0;i<res.length;i++){
+                        listRoles.push(`${res[i].title} ${res[i].id} ${res[i].salary} ${res[i].department_id}`);
+                        
+                       };
+                       
+                     
+                                      if(err) {
+                                              throw err
+                                            };
+                          
+                                            inquirer
+                                              .prompt({
+                                                name: 'roleToChoose',
+                                                message: "Please select role to delete",
+                                                type:'list',
+                                                choices:listRoles
+                                              }
+                                            )
+                                            
+                                            .then(function(answer){
+                                              let roleData = answer.roleToChoose.split(" ");
+                                              let roleIdChosen = roleData[1];
+                                              
+                                              console.log(roleIdChosen);
+                                             
+                                              let sql = 'DELETE FROM role WHERE id = ?';
+                                                connection.query(sql,[roleIdChosen],function(err,res){
+                                                    console.log(`Updated! ${roleData[0]} with ID ${roleData[1]} was deleted`);
+                                                 
+                                                    deleteDepRolesEmps();
+                                                      
+                                                  })
+                                               
+                                           
+
+                                            })  
+                                           
+                                           
+                                          });
+                                  
+
+                  }
+
+
+                  else if(answer.delMain ==="Delete employee"){
+                    connection.query ('SELECT employee.id, employee.first_name, employee.last_name, employee.role_id, employee.manager_id FROM employee',function(err,res){
+                      console.table(res);
+                      console.log(res)
+                      
+                      for (let i=0;i<res.length;i++){
+                        listEmps.push(`${res[i].id} ${res[i].first_name} ${res[i].last_name} ${res[i].role_id} ${res[i].manager_id}`);
+                        
+                       };
+                       
+                     
+                                      if(err) {
+                                              throw err
+                                            };
+                          
+                                            inquirer
+                                              .prompt({
+                                                name: 'empToChoose',
+                                                message: "Please select employee to delete",
+                                                type:'list',
+                                                choices:listEmps
+                                              }
+                                            )
+                                            
+                                            .then(function(answer){
+                                              let empData = answer.empToChoose.split(" ");
+                                              let empIdChosen = empData[0];
+                                              
+                                              console.log(empIdChosen);
+                                             
+                                              let sql = 'DELETE FROM employee WHERE id = ?';
+                                                connection.query(sql,[empIdChosen],function(err,res){
+                                                    console.log(`Updated! ${empData[1]} ${empData[1]} with ID ${empData[0]} was deleted`);
+                                                 
+                                                    deleteDepRolesEmps();
+                                                      
+                                                  })
+                                               
+                                           
+
+                                            })  
+                                           
+                                           
+                                          });
+                                  
+
+                  }
+
+
+
+
+
+                else if(answer.delMain ==="exit"){
+                  startApp();
+                }
+            });
+            
+
+};
+
+
+
+
+
+
+
+
+
+// total budget by dept
+
+function totalBudgetByDept(){}
