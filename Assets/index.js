@@ -516,7 +516,7 @@ function deleteDepRolesEmps(){
 
 
                   if(answer.delMain ==='Delete department'){
-                        connection.query ('SELECT department.id, department.name FROM department',function(err,res){
+                        connection.query ('SELECT department.id, department.name FROM department ORDER BY department.id',function(err,res){
                           console.table(res);
                           console.log(res)
                           
@@ -545,10 +545,12 @@ function deleteDepRolesEmps(){
                                                   
                                                   console.log(deptIdChosen);
                                                  
-                                                  let sql = 'DELETE FROM department WHERE id = ?';
+                                                  let sql =  'DELETE FROM department WHERE id = ?;'
+
+                                              
                                                     connection.query(sql,[deptIdChosen],function(err,res){
                                                         console.log(`Updated! ${depData[0]} with ID ${depData[1]} was deleted`);
-                                                        console.log(res);
+                                                        console.table(res);
                                                         deleteDepRolesEmps();
                                                           
                                                       })
@@ -672,12 +674,6 @@ function deleteDepRolesEmps(){
             
 
 };
-
-
-
-
-
-
 
 
 
