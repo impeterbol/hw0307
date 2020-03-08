@@ -545,7 +545,7 @@ function deleteDepRolesEmps(){
                                                   
                                                   console.log(deptIdChosen);
                                                  
-                                                  let sql =  'SET FOREIGN_KEY_CHECKS=0;DELETE FROM department WHERE id = ?;SET FOREIGN_KEY_CHECKS=1;'
+                                                  let sql =  'DELETE FROM department WHERE id = ?;'
 
                                               
                                                     connection.query(sql,[deptIdChosen],function(err,res){
