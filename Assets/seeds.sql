@@ -1,5 +1,5 @@
--- drop database if exists empTrackerDb;
--- create database empTrackerDb;
+drop database if exists empTrackerDb;
+create database empTrackerDb;
 
 use empTrackerDb;
 
@@ -14,8 +14,9 @@ id INT auto_increment NOT NULL,
 primary key(id),
 title VARCHAR(30) NOT NULL,
 salary DECIMAL(10,2),
-department_id INT NOL NULL,
+department_id INT NOT NULL,
 FOREIGN KEY (department_id) REFERENCES department(id)
+ ON DELETE CASCADE
 )
 
 
@@ -25,44 +26,26 @@ primary key(id),
 first_name VARCHAR(100) NULL,
 last_name VARCHAR(100) NULL,
 role_id INT NOT NULL,
-FOREIGN KEY (role_id) REFERENCES role(id),
-manager_id INT NULL,
-FOREIGN KEY (manager_id) REFERENCES role(id)
+FOREIGN KEY (role_id) REFERENCES role(id)  ON DELETE CASCADE,
+manager_id INT NULL
 )
 
-select * from department;
-
-insert into deparment (name) values ('it', 'logistics', 'legal', 'production', 'r&d','procurement', 'marketing','hr','finance','security');
-insert into role (title, salary, department_id) values ('associate_it', 50000,1),('senior_r&d',70000,5);
-insert into role (title, salary, department_id) values ('senior_legal', 90000,3),('entry_hr',30000,8), ('senior_hr',70000,8),('entry_finance',50000,9),('senior_finance',100000,9),('middle_security',60000,10);
-insert into role (id,title, salary, department_id) values (2,'mid_legal','70000',2);
-insert into role (title, salary, department_id) values ('entry_logistics',40000,2),('senior_production',60000,4);
-DELETE FROM role WHERE id =3;
-select * from role;
-select * from department;
-select * from employee;
-insert into role (title, salary, department_id) values ('entry_marketing',20000,7),('senior_marketing',90000,7), ('senior_procurement',50000,6);
 
 
+insert into department (id, name) values ('99','no_department');
+insert into department (name) values ('it'),('logistics'),('legal'),('production'),('r&d'),('procurement'),('marketing'),('hr'),('finance'),('security');
 
- **id** - INT PRIMARY KEY
-  * **first_name** - VARCHAR(30) to hold employee first name
-  * **last_name** - VARCHAR(30) to hold employee last name
-  * **role_id** - INT to hold reference to role employee has
-  * **manager_id** - INT to hold reference to another employee that manager of the current employee. This field may be null if the employee has no manager
-
-
-  insert into employee (first_name,last_name,role_id,manager_id) values ('John','Smith', 1);
-
-insert into department (id, name) values ('99','no_department1');
 insert into role (id,title, salary, department_id) values (99,'no_role','99','99');
+insert into role (title, salary, department_id) values ('associate_it', '50000','100'),('senior_r&d','70000','104'),('senior_legal', '90000','102'),('entry_hr','30000','107'),('senior_hr','70000','107'),('entry_finance','50000','108'),('entry_finance','55000','108'),('senior_finance','100000','108'),('middle_security','60000','109'),('entry_logistics','40000','101'),('senior_production','60000','103'),('entry_marketing','20000','106'),('senior_marketing','90000','106'), ('senior_procurement','50000','105');
+
+
+
 insert into employee (id, first_name,last_name,role_id,manager_id) values ('99','No_Manager','No_Manager','99','99');
+insert into employee (first_name,last_name,role_id) values ('John','Smith', '100'),('Peter','Parker','104'), ('Some', 'Guy','105'), ('Dwayne','Richardson','107'),('Scrudge','McDuck','109'),('Iam','Bodyguard','108'),('Jack','Nickolson','101'),('Henry','Ford','106'),('Random','Person','100'),('Mr','Buyer','102');
+insert into employee (first_name,last_name,role_id,manager_id) VALUES ('Donald','Carrot','103','107'), ('Looney','Tunes','101','109'),('Gwen','Stefany','102','106');
 
 
-  insert into employee (first_name,last_name,role_id) values ('Peter','Parker',4), ('Some', 'Guy',5), ('Dwayne','Richardson',7),('Scrudge','McDuck',9),('Iam','Bodyguard',10),('Jack','Nickolson',11),('Henry','Ford',12),('Random','Person',14),('Mr','Buyer',15);
-insert into employee (id,first_name,last_name,role_id) values (0,'No Manager','No Manager',0);
+select * from department;
+select * from role;
+select * from employee;
 
-insert into employee (first_name,last_name,role_id,manager_id) VALUES ('Donald','Carrot',6,7), ('Looney','Tunes',8,9),('Gwen','Stefany',13,14);
-
-
-  select * from employee;
