@@ -723,9 +723,11 @@ inquirer
 
                                         console.log(deptIdChosen);
 
-                                      let sql ='SELECT SUM(salary) FROM employee WHERE employee.department_id =?;'
+                                      let sql =`select d.id,d.name,sum(r.salary) from department d inner join role r on d.id=r.department_id group by d.id,d.name`
+                                      
+                                      // SELECT employee.department_id, SUM(salary) FROM employee GROUP BY employee.department_id WHERE employee.department_id =?;'
 
-                                        connection.query(sql, [deptIdChosen], function (err, res) {
+                                        connection.query(sql,[deptIdChosen], function (err, res) {
                                         console.log(res);
                                         console.table(res);
                                       
