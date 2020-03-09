@@ -728,7 +728,7 @@ inquirer
                                       // SELECT employee.department_id, SUM(salary) FROM employee GROUP BY employee.department_id WHERE employee.department_id =?;'
 
                                         connection.query(sql,[deptIdChosen], function (err, res) {
-                                        console.log(res);
+                                        // console.log(res);
                                         console.table(res);
                                       
                                         totalBudgetByDept();
